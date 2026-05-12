@@ -1,0 +1,2337 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DGIPR Fene — Mobile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/lucide-react@0.468.0/dist/umd/lucide-react.js"></script>
+  <style>
+    :root {
+      --saffron: #FF9933;
+      --saffron-dim: rgba(255,153,51,.14);
+      --saffron-glow: rgba(255,153,51,.28);
+      --black: #111111;
+      --white: #FFFFFF;
+      --grey: #6B7280;
+      --surface: #F9F9F9;
+      --surface-2: #F2F2F2;
+      --border: #E8E8E8;
+      --ink: #111111;
+      --ink-2: #444444;
+      --ink-3: #888888;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      margin: 0; padding: 0;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      background: #0C0C0C;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Desktop shell — phone frame */
+    .desktop-shell {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(ellipse 700px 500px at 20% 10%, rgba(255,153,51,.09), transparent),
+        radial-gradient(ellipse 600px 600px at 80% 90%, rgba(255,153,51,.05), transparent),
+        linear-gradient(160deg, #111 0%, #0a0a0a 100%);
+      padding: 32px 16px;
+    }
+
+    .phone-outer {
+      position: relative;
+      width: 393px;
+      background: #1A1A1A;
+      border-radius: 52px;
+      padding: 12px;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.08),
+        0 0 0 2px rgba(0,0,0,.9),
+        0 60px 120px rgba(0,0,0,.9),
+        0 0 80px rgba(255,153,51,.04);
+    }
+
+    .phone-inner {
+      width: 100%;
+      border-radius: 42px;
+      overflow: hidden;
+      position: relative;
+      background: var(--white);
+      /* Approximate iPhone 15 aspect: 393 × 852 */
+      height: 812px;
+    }
+
+    /* Side buttons */
+    .phone-outer::before {
+      content: "";
+      position: absolute;
+      left: -4px;
+      top: 120px;
+      width: 4px;
+      height: 36px;
+      background: #2a2a2a;
+      border-radius: 3px 0 0 3px;
+      box-shadow: 0 50px 0 #2a2a2a, 0 100px 0 #2a2a2a;
+    }
+    .phone-outer::after {
+      content: "";
+      position: absolute;
+      right: -4px;
+      top: 160px;
+      width: 4px;
+      height: 70px;
+      background: #2a2a2a;
+      border-radius: 0 3px 3px 0;
+    }
+
+    /* Dynamic island */
+    .dynamic-island {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 34px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 100;
+    }
+
+    /* App chrome */
+    .app-chrome {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      background: var(--white);
+      overflow: hidden;
+    }
+
+    /* Status bar */
+    .status-bar {
+      height: 54px;
+      padding: 14px 20px 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-shrink: 0;
+      background: var(--white);
+      position: relative;
+      z-index: 10;
+    }
+
+    .status-bar-time {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--black);
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* App header */
+    .app-header {
+      padding: 4px 20px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      z-index: 10;
+    }
+
+    .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .logo-icon {
+      width: 32px; height: 32px;
+      background: var(--black);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-text {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--black);
+    }
+
+    .logo-sub {
+      font-size: 11px;
+      color: var(--ink-3);
+      font-weight: 600;
+      letter-spacing: .02em;
+    }
+
+    .lang-btn {
+      height: 32px;
+      padding: 0 12px;
+      border-radius: 99px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink-2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all .15s ease;
+    }
+    .lang-btn:active { transform: scale(.96); }
+
+    /* Scrollable content area */
+    .content-area {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .content-area::-webkit-scrollbar { display: none; }
+
+    /* Bottom nav */
+    .bottom-nav {
+      flex-shrink: 0;
+      height: 72px;
+      background: rgba(255,255,255,.94);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: stretch;
+      padding: 0 4px;
+      padding-bottom: 8px;
+    }
+
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      border-radius: 12px;
+      transition: all .15s ease;
+      position: relative;
+    }
+    .nav-item:active { transform: scale(.92); }
+
+    .nav-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .02em;
+    }
+
+    .nav-badge {
+      position: absolute;
+      top: 6px;
+      right: calc(50% - 18px);
+      min-width: 16px;
+      height: 16px;
+      background: var(--saffron);
+      border-radius: 99px;
+      font-size: 9px;
+      font-weight: 800;
+      color: var(--black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+
+    /* Stats row */
+    .stats-row {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stat-cell {
+      flex: 1;
+      padding: 12px 0;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat-cell:last-child { border-right: none; }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--black);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 9.5px;
+      font-weight: 600;
+      color: var(--ink-3);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-top: 3px;
+    }
+
+    /* Filter chips */
+    .chips-row {
+      display: flex;
+      gap: 7px;
+      padding: 11px 16px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .chips-row::-webkit-scrollbar { display: none; }
+
+    .chip {
+      height: 30px;
+      padding: 0 13px;
+      border-radius: 99px;
+      font-size: 11.5px;
+      font-weight: 700;
+      white-space: nowrap;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      color: var(--ink-2);
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+    .chip:active { transform: scale(.94); }
+    .chip.active {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+    }
+
+    /* Document cards */
+    .doc-list { padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+
+    .doc-card {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      cursor: pointer;
+      transition: all .18s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    }
+    .doc-card:active { transform: scale(.98); border-color: var(--saffron); box-shadow: 0 2px 16px var(--saffron-glow); }
+
+    .doc-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .doc-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--black);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 5px;
+    }
+
+    .doc-meta {
+      font-size: 11px;
+      color: var(--ink-3);
+      font-weight: 600;
+    }
+
+    .doc-actions {
+      display: flex;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
+    .btn-preview {
+      flex: 1;
+      height: 34px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--ink-2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all .15s ease;
+    }
+    .btn-preview:active { transform: scale(.96); }
+
+    .btn-fene {
+      flex: 1;
+      height: 34px;
+      border-radius: 8px;
+      border: none;
+      background: var(--black);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--white);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all .15s ease;
+    }
+    .btn-fene:active { transform: scale(.96); background: #333; }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      height: 20px;
+      padding: 0 7px;
+      border-radius: 99px;
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .badge-speech { background: var(--saffron); color: var(--black); }
+    .badge-gr { background: var(--black); color: var(--white); }
+    .badge-default { background: var(--surface-2); color: var(--ink-2); border: 1px solid var(--border); }
+    .badge-access { background: transparent; border: 1px solid var(--border); color: var(--ink-3); }
+    .badge-score { background: rgba(34,197,94,.12); color: #16a34a; border: 1px solid rgba(34,197,94,.25); }
+
+    /* Bottom sheet */
+    .sheet-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.5);
+      z-index: 50;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .28s ease;
+    }
+    .sheet-backdrop.open { opacity: 1; pointer-events: all; }
+
+    .bottom-sheet {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: var(--white);
+      border-radius: 22px 22px 0 0;
+      max-height: 88%;
+      z-index: 51;
+      transform: translateY(100%);
+      transition: transform .3s cubic-bezier(.32,.72,0,1);
+      display: flex;
+      flex-direction: column;
+    }
+    .bottom-sheet.open { transform: translateY(0); }
+
+    .sheet-handle {
+      width: 40px; height: 4px;
+      background: var(--border);
+      border-radius: 99px;
+      margin: 10px auto 0;
+    }
+
+    .sheet-header {
+      padding: 12px 20px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sheet-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px 20px;
+      scrollbar-width: none;
+    }
+    .sheet-body::-webkit-scrollbar { display: none; }
+
+    .sheet-footer {
+      padding: 12px 20px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+    }
+
+    /* Log step */
+    .log-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      position: relative;
+    }
+    .log-dot {
+      width: 8px; height: 8px;
+      border-radius: 99px;
+      background: var(--saffron);
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .log-line {
+      position: absolute;
+      left: 3.5px;
+      top: 22px;
+      bottom: -8px;
+      width: 1px;
+      background: var(--border);
+    }
+    .log-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--black);
+    }
+    .log-time {
+      margin-left: auto;
+      font-size: 10.5px;
+      color: var(--ink-3);
+      font-weight: 600;
+    }
+
+    /* Search */
+    .search-bar-wrap {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--white);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    .search-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 0 12px;
+      height: 42px;
+      transition: border-color .18s ease;
+    }
+    .search-input-wrap:focus-within {
+      border-color: var(--saffron);
+      box-shadow: 0 0 0 3px var(--saffron-dim);
+    }
+
+    .search-input {
+      flex: 1;
+      border: none;
+      background: none;
+      font-size: 14px;
+      font-family: inherit;
+      font-weight: 500;
+      color: var(--black);
+      outline: none;
+    }
+    .search-input::placeholder { color: var(--ink-3); }
+
+    /* Suggestions */
+    .suggestions-row {
+      display: flex;
+      gap: 7px;
+      padding: 10px 14px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .suggestions-row::-webkit-scrollbar { display: none; }
+
+    /* Fene tab */
+    .fene-hero {
+      padding: 20px 18px 16px;
+      background: var(--black);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .fene-hero-icon {
+      width: 44px; height: 44px;
+      background: var(--saffron);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .fene-hero-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--white);
+      letter-spacing: -0.01em;
+    }
+
+    .fene-hero-sub {
+      font-size: 11px;
+      color: rgba(255,255,255,.55);
+      font-weight: 500;
+      margin-top: 1px;
+    }
+
+    .fene-body { padding: 16px; }
+
+    .fene-type-row {
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      margin-bottom: 14px;
+    }
+    .fene-type-row::-webkit-scrollbar { display: none; }
+
+    .type-chip {
+      height: 32px;
+      padding: 0 13px;
+      border-radius: 99px;
+      font-size: 11.5px;
+      font-weight: 700;
+      white-space: nowrap;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      color: var(--ink-2);
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+    .type-chip.active {
+      background: var(--saffron);
+      color: var(--black);
+      border-color: var(--saffron);
+    }
+    .type-chip:active { transform: scale(.94); }
+
+    .fene-textarea {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--black);
+      padding: 13px;
+      resize: none;
+      min-height: 96px;
+      outline: none;
+      transition: border-color .18s ease;
+    }
+    .fene-textarea:focus {
+      border-color: var(--saffron);
+      box-shadow: 0 0 0 3px var(--saffron-dim);
+    }
+
+    .btn-generate {
+      width: 100%;
+      height: 48px;
+      border-radius: 12px;
+      border: none;
+      background: var(--saffron);
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--black);
+      cursor: pointer;
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: all .18s ease;
+      box-shadow: 0 8px 20px rgba(255,153,51,.3);
+    }
+    .btn-generate:active { transform: scale(.97); box-shadow: 0 4px 10px rgba(255,153,51,.2); }
+    .btn-generate:disabled { opacity: .6; }
+
+    .output-card {
+      margin-top: 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      background: var(--white);
+    }
+
+    .output-header {
+      padding: 12px 14px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .output-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    .btn-copy {
+      height: 28px;
+      padding: 0 10px;
+      border-radius: 7px;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ink-2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all .15s ease;
+    }
+    .btn-copy:active { transform: scale(.94); }
+
+    .output-body {
+      padding: 14px;
+      font-size: 12px;
+      line-height: 1.65;
+      color: var(--ink-2);
+      font-weight: 500;
+      white-space: pre-wrap;
+      max-height: 240px;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+    .output-body::-webkit-scrollbar { display: none; }
+
+    .sources-row {
+      padding: 10px 14px 12px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--border);
+    }
+
+    .source-chip {
+      height: 24px;
+      padding: 0 9px;
+      border-radius: 99px;
+      background: var(--saffron-dim);
+      border: 1px solid var(--saffron-glow);
+      font-size: 10px;
+      font-weight: 700;
+      color: #b35900;
+    }
+
+    /* Notifications */
+    .notif-header {
+      padding: 14px 18px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .notif-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .notif-subtitle {
+      font-size: 12px;
+      color: var(--ink-3);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+    .notif-list { padding: 8px 0; }
+
+    .notif-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 13px;
+      padding: 13px 18px;
+      border-bottom: 1px solid rgba(0,0,0,.04);
+      cursor: pointer;
+      transition: background .15s ease;
+    }
+    .notif-item:active { background: var(--surface); }
+
+    .notif-icon-wrap {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .notif-body { flex: 1; }
+    .notif-text { font-size: 13px; font-weight: 700; color: var(--black); line-height: 1.35; }
+    .notif-time { font-size: 11px; color: var(--ink-3); font-weight: 500; margin-top: 3px; }
+
+    .notif-dot {
+      width: 8px; height: 8px;
+      border-radius: 99px;
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+
+    /* Loading dots */
+    .loading-dot { animation: blink 1.2s infinite both; }
+    .loading-dot:nth-child(2) { animation-delay: .2s; }
+    .loading-dot:nth-child(3) { animation-delay: .4s; }
+
+    @keyframes blink {
+      0%, 80%, 100% { opacity: .2; transform: scale(.8); }
+      40% { opacity: 1; transform: scale(1); }
+    }
+
+    /* Label */
+    .field-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--ink-3);
+      margin-bottom: 7px;
+    }
+
+    /* Animate tab content */
+    .tab-enter {
+      animation: tabFadeIn .22s ease-out both;
+    }
+    @keyframes tabFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Search result */
+    .search-empty {
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--ink-3);
+    }
+    .search-empty-icon {
+      width: 56px; height: 56px;
+      background: var(--surface);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+    }
+
+    /* Tag in detail */
+    .detail-tag {
+      display: inline-flex;
+      height: 22px;
+      padding: 0 9px;
+      border-radius: 99px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--ink-2);
+      align-items: center;
+    }
+
+    /* Camera FAB in header */
+    .camera-fab {
+      width: 36px; height: 36px;
+      border-radius: 11px;
+      border: none;
+      background: var(--saffron);
+      color: var(--black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(255,153,51,.4);
+      transition: all .15s ease;
+      flex-shrink: 0;
+    }
+    .camera-fab:active { transform: scale(.91); }
+
+    /* Full-screen OCR overlay */
+    .ocr-screen {
+      position: absolute;
+      inset: 0;
+      z-index: 60;
+      background: var(--black);
+      display: flex;
+      flex-direction: column;
+      transform: translateY(100%);
+      transition: transform .32s cubic-bezier(.32,.72,0,1);
+    }
+    .ocr-screen.open { transform: translateY(0); }
+
+    .ocr-topbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      flex-shrink: 0;
+    }
+    .ocr-back-btn {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+    .ocr-back-btn:active { transform: scale(.92); }
+
+    .ocr-topbar-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+    .ocr-topbar-sub {
+      font-size: 10.5px;
+      color: rgba(255,255,255,.45);
+      font-weight: 500;
+      margin-top: 1px;
+    }
+
+    /* Landing — choose source */
+    .ocr-landing {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 20px 32px;
+      gap: 0;
+    }
+    .ocr-hero-ring {
+      width: 96px; height: 96px;
+      border-radius: 99px;
+      background: rgba(255,153,51,.12);
+      border: 2px solid rgba(255,153,51,.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .ocr-hero-ring::before {
+      content: "";
+      position: absolute;
+      inset: -10px;
+      border-radius: 99px;
+      border: 1.5px solid rgba(255,153,51,.1);
+    }
+    .ocr-hero-ring::after {
+      content: "";
+      position: absolute;
+      inset: -20px;
+      border-radius: 99px;
+      border: 1px solid rgba(255,153,51,.05);
+    }
+    .ocr-hero-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.02em;
+      text-align: center;
+    }
+    .ocr-hero-sub {
+      font-size: 13px;
+      color: rgba(255,255,255,.45);
+      font-weight: 500;
+      text-align: center;
+      margin-top: 6px;
+      line-height: 1.5;
+      max-width: 260px;
+    }
+    .ocr-source-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      margin-top: 32px;
+    }
+    .ocr-source-btn {
+      height: 56px;
+      border-radius: 14px;
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 0 18px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .15s ease;
+    }
+    .ocr-source-btn:active { transform: scale(.97); }
+    .ocr-source-btn.primary {
+      background: var(--saffron);
+      color: var(--black);
+    }
+    .ocr-source-btn.secondary {
+      background: rgba(255,255,255,.08);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.12);
+    }
+    .ocr-source-btn-label {
+      font-size: 14px;
+      font-weight: 800;
+      text-align: left;
+    }
+    .ocr-source-btn-sub {
+      font-size: 10.5px;
+      font-weight: 500;
+      opacity: .65;
+      margin-top: 1px;
+    }
+
+    /* Viewing the image before processing */
+    .ocr-image-stage {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .ocr-image-viewport {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background: #0a0a0a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ocr-image-el {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    /* Corner guides */
+    .ocr-guide-corner {
+      position: absolute;
+      width: 22px; height: 22px;
+      border-color: var(--saffron);
+      border-style: solid;
+      opacity: .85;
+    }
+    .ocr-guide-corner.tl { top: 16px; left: 16px; border-width: 2.5px 0 0 2.5px; border-radius: 3px 0 0 0; }
+    .ocr-guide-corner.tr { top: 16px; right: 16px; border-width: 2.5px 2.5px 0 0; border-radius: 0 3px 0 0; }
+    .ocr-guide-corner.bl { bottom: 16px; left: 16px; border-width: 0 0 2.5px 2.5px; border-radius: 0 0 0 3px; }
+    .ocr-guide-corner.br { bottom: 16px; right: 16px; border-width: 0 2.5px 2.5px 0; border-radius: 0 0 3px 0; }
+
+    /* Scan overlay on image */
+    .ocr-scan-beam {
+      position: absolute;
+      left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent 0%, var(--saffron) 40%, rgba(255,153,51,.9) 50%, var(--saffron) 60%, transparent 100%);
+      box-shadow: 0 0 12px 3px rgba(255,153,51,.5);
+      animation: beam-sweep 1.8s cubic-bezier(.4,0,.6,1) infinite;
+    }
+    @keyframes beam-sweep {
+      0%   { top: 5%; opacity: 0; }
+      5%   { opacity: 1; }
+      95%  { opacity: 1; }
+      100% { top: 95%; opacity: 0; }
+    }
+
+    /* Bounding boxes that appear on image */
+    .ocr-bbox {
+      position: absolute;
+      border: 1.5px solid rgba(255,153,51,.7);
+      background: rgba(255,153,51,.06);
+      border-radius: 3px;
+      animation: bbox-pop .25s ease-out both;
+    }
+    @keyframes bbox-pop {
+      from { opacity: 0; transform: scale(.96); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .ocr-image-footer {
+      padding: 14px 16px;
+      background: var(--black);
+      border-top: 1px solid rgba(255,255,255,.08);
+      display: flex;
+      gap: 10px;
+    }
+
+    /* OCR running — text stream panel */
+    .ocr-running-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .ocr-status-bar {
+      padding: 10px 16px;
+      background: rgba(255,153,51,.1);
+      border-bottom: 1px solid rgba(255,153,51,.2);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .ocr-status-dot {
+      width: 8px; height: 8px;
+      border-radius: 99px;
+      background: var(--saffron);
+      animation: ocr-pulse 1s infinite;
+      flex-shrink: 0;
+    }
+    @keyframes ocr-pulse {
+      0%, 100% { opacity: .4; transform: scale(.85); }
+      50%       { opacity: 1; transform: scale(1.1); }
+    }
+    .ocr-status-text { font-size: 12px; font-weight: 700; color: var(--saffron); }
+    .ocr-status-model { font-size: 10.5px; color: rgba(255,255,255,.35); margin-left: auto; font-weight: 500; }
+
+    .ocr-split {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .ocr-img-thumb {
+      height: 130px;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+      background: #0a0a0a;
+    }
+    .ocr-img-thumb img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      opacity: .7;
+    }
+    .ocr-img-thumb-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 40%, var(--black) 100%);
+    }
+
+    /* Streaming text terminal */
+    .ocr-terminal {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 14px;
+      scrollbar-width: none;
+      font-family: "SF Mono", "Fira Mono", "Consolas", monospace;
+      font-size: 11px;
+      line-height: 1.7;
+      color: rgba(255,255,255,.75);
+      background: #0e0e0e;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+    .ocr-terminal::-webkit-scrollbar { display: none; }
+    .ocr-terminal-cursor {
+      display: inline-block;
+      width: 7px; height: 13px;
+      background: var(--saffron);
+      vertical-align: text-bottom;
+      animation: cursor-blink .7s steps(1) infinite;
+      margin-left: 1px;
+    }
+    @keyframes cursor-blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    .ocr-terminal-line { margin-bottom: 0; }
+    .ocr-terminal-line.highlight { color: var(--saffron); font-weight: 700; }
+    .ocr-terminal-line.dim { color: rgba(255,255,255,.3); }
+
+    /* Progress bar below terminal */
+    .ocr-progress-wrap {
+      padding: 10px 14px 12px;
+      background: var(--black);
+      border-top: 1px solid rgba(255,255,255,.06);
+      flex-shrink: 0;
+    }
+    .ocr-progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10.5px;
+      color: rgba(255,255,255,.35);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .ocr-progress-track {
+      height: 3px;
+      background: rgba(255,255,255,.1);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .ocr-progress-fill {
+      height: 100%;
+      background: var(--saffron);
+      border-radius: 99px;
+      transition: width .4s ease;
+    }
+
+    /* Results screen */
+    .ocr-results {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--white);
+      overflow: hidden;
+    }
+    .ocr-results-img {
+      height: 100px;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .ocr-results-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      filter: brightness(.55);
+    }
+    .ocr-results-img-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: flex-end;
+      padding: 12px 16px;
+      background: linear-gradient(to bottom, transparent, rgba(0,0,0,.7));
+    }
+    .ocr-confidence-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255,153,51,.9);
+      border-radius: 99px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #111;
+    }
+    .ocr-results-body {
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+    .ocr-results-body::-webkit-scrollbar { display: none; }
+
+    .ocr-extracted-text-box {
+      margin: 14px 14px 0;
+      background: #fafafa;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .ocr-extracted-text-header {
+      padding: 9px 13px;
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .ocr-extracted-text-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--ink-3);
+    }
+    .ocr-extracted-text-body {
+      padding: 11px 13px;
+      font-size: 11px;
+      line-height: 1.7;
+      color: var(--ink-2);
+      font-weight: 500;
+      max-height: 110px;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+    .ocr-extracted-text-body::-webkit-scrollbar { display: none; }
+
+    .ocr-fields-section {
+      padding: 14px;
+    }
+    .ocr-field-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 8px;
+    }
+    .ocr-field-row:last-child { border-bottom: none; }
+    .ocr-field-key {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink-3);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      flex-shrink: 0;
+    }
+    .ocr-field-val {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--black);
+      text-align: right;
+    }
+    .ocr-field-conf {
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 99px;
+      margin-left: 6px;
+      flex-shrink: 0;
+    }
+    .ocr-field-conf.hi { background: rgba(34,197,94,.12); color: #16a34a; }
+    .ocr-field-conf.mid { background: rgba(234,179,8,.12); color: #a16207; }
+
+    .ocr-results-footer {
+      padding: 12px 14px 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+      background: var(--white);
+    }
+
+    /* Progress bar */
+    .confidence-bar-bg {
+      height: 4px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+    .confidence-bar-fill {
+      height: 100%;
+      background: var(--saffron);
+      border-radius: 99px;
+      transition: width .7s ease;
+    }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+  const { useEffect, useRef, useState, useCallback } = React;
+  const icons = window.LucideReact || {};
+  const {
+    Archive, Search, BrainCircuit, Bell, Eye, ArrowRight, X, Check,
+    Clock, Copy, Download, Send, ChevronDown, UserRound, Sparkles,
+    FileText, Filter, Wifi, Battery, Signal, Languages, CheckCircle2,
+    AlertCircle, Upload, BellRing, Activity, Zap, Camera, FolderOpen,
+    ScanText, Plus, ScanLine, ImageUp, Scan, ChevronLeft
+  } = icons;
+
+  function Icon({ as: C, size = 16, className = "" }) {
+    return C ? <C size={size} className={className} strokeWidth={2} /> : null;
+  }
+
+  // ── DATA ────────────────────────────────────────────────────────────────
+  const seedRows = [
+    ["DOC-001","CM Address - Nashik Agriculture Summit 2024","Speech","Agriculture","Nashik","Namo Shetkari Yojana","Marathi","Restricted",12,"Comprehensive address delivered by the Hon'ble Chief Minister at the Nashik Agriculture Summit, covering PM-KISAN integration, women farmer support, and irrigation targets for Nashik division.","2024-03-15"],
+    ["DOC-002","Namo Shetkari Mahila Sashaktikaran Yojana - Policy Brief","Policy Brief","Agriculture","State-wide","Namo Shetkari Yojana","English","Restricted",18,"Policy brief covering women farmer enrolment, training camps, direct benefit transfer integration, and district implementation priorities.","2024-03-16"],
+    ["DOC-003","Budget Allocation: Irrigation Projects Nashik Division FY2024-25","Report","Water Resources","Nashik","Jalyukt Shivar 2.0","English","Classified",26,"Budget report for irrigation infrastructure, command area expansion, and conservation works across Nashik division for FY2024-25.","2024-03-17"],
+    ["DOC-004","Jalyukt Shivar 2.0 - District Progress Report Q3","Report","Water Resources","Ahmednagar","Jalyukt Shivar 2.0","Marathi","Restricted",34,"Quarterly progress report on water conservation works, village-level participation, completion rates, and next-quarter bottlenecks.","2024-03-18"],
+    ["DOC-005","CM Visit Brief - Aurangabad Infrastructure Projects","Policy Brief","Public Works","Chhatrapati Sambhajinagar","Maharashtra Samruddhi","English","Restricted",11,"Briefing note for CM review of road, bridge, and urban connectivity projects in Chhatrapati Sambhajinagar region.","2024-03-19"],
+    ["DOC-006","Press Release: Ladki Bahin Yojana - 1.5 Crore Beneficiaries Milestone","Press Release","Women & Child","State-wide","Ladki Bahin Yojana","Marathi","Public",5,"Public release announcing the 1.5 crore beneficiary milestone and the statewide direct benefit transfer coverage achieved under Ladki Bahin Yojana.","2024-03-20"],
+    ["DOC-007","DCM Address - Pune Metro Phase 2 Inauguration","Speech","Urban Development","Pune","Pune Metro","English","Public",9,"Deputy Chief Minister's address for Pune Metro Phase 2 inauguration, highlighting urban mobility, last-mile integration, and commuter benefits.","2024-03-21"],
+    ["DOC-008","GR: Enhanced MSP for Soybeans FY2024-25","GR","Agriculture","State-wide","None","Marathi","Public",7,"Government Resolution notifying enhanced minimum support price process, procurement guidelines, and district coordination protocols for soybeans.","2024-03-22"],
+    ["DOC-009","Marathwada Water Conservation: 5-Year Sectoral Review","Research Paper","Water Resources","Marathwada","AMRUT 2.0","English","Restricted",42,"Five-year analytical review of water conservation, drought resilience, recharge measures, and district-level infrastructure outcomes in Marathwada.","2024-03-23"],
+    ["DOC-010","Education Budget FY2024-25: Key Allocations Summary","Report","Education","State-wide","None","English","Restricted",16,"Summary of education budget allocations, priority programmes, school infrastructure, and district implementation benchmarks.","2024-04-01"],
+    ["DOC-011","Maharashtra Industrial Policy 2024 - Summary Note","Policy Brief","Industries","State-wide","None","English","Restricted",14,"Summary note on Maharashtra Industrial Policy 2024, investment facilitation, MSME support, and district-level industrial growth priorities.","2024-04-02"],
+    ["DOC-012","CM Speech - Shivaji Maharaj Jayanti Address 2024","Speech","Cultural Affairs","Mumbai","None","Marathi","Public",8,"Speech draft and final address for Shivaji Maharaj Jayanti, covering cultural pride, governance values, and public welfare priorities.","2024-04-03"],
+    ["DOC-013","GR: Expansion of Annapurna Scheme - Urban Districts","GR","Food & Civil Supplies","Mumbai","Annapurna","Marathi","Public",10,"Government Resolution expanding Annapurna scheme eligibility and implementation procedures for selected urban districts.","2024-04-04"],
+    ["DOC-014","Foreign Delegate Briefing: Japan Infrastructure Delegation","Policy Brief","Infrastructure","State-wide","None","English","Classified",13,"Briefing note for Japan infrastructure delegation, including investment areas, protocol notes, project inventory, and partnership opportunities.","2024-04-05"],
+    ["DOC-015","District Profile: Nashik - Socio-Economic Indicators 2024","Report","Planning","Nashik","None","English","Restricted",31,"District profile covering Nashik's demography, agriculture, exports, industry, education, health, and infrastructure indicators for 2024.","2024-04-06"],
+    ["DOC-016","Tribal Welfare Scheme Progress Report: Palghar District","Report","Tribal Development","Palghar","Van Bandhu Kalyan","Marathi","Restricted",24,"Progress report on tribal welfare schemes in Palghar, covering health outreach, education support, housing, and livelihood initiatives.","2024-04-07"],
+    ["DOC-017","DCM Address - Sangli Sugarcane Farmers Summit","Speech","Agriculture","Sangli","None","Marathi","Public",9,"Deputy Chief Minister's address to sugarcane farmers in Sangli, covering cooperative mills, irrigation, MSP issues, and farmer welfare.","2024-04-08"],
+    ["DOC-018","Maharashtra Innovation Hub - Technology Governance Brief","Policy Brief","IT & Digital","Pune","Digital Maharashtra","English","Restricted",15,"Technology governance brief for Maharashtra Innovation Hub, covering AI enablement, digital services, data governance, and citizen platforms.","2024-04-09"],
+    ["DOC-019","Ladki Bahin Yojana: Implementation Framework GR","GR","Women & Child","State-wide","Ladki Bahin Yojana","Marathi","Restricted",19,"Government Resolution defining implementation framework, eligibility, verification, DBT workflow, and grievance redressal for Ladki Bahin Yojana.","2024-04-10"],
+    ["DOC-020","CM Weekly Programme: MH This Week - April 2024","Report","DGIPR","State-wide","None","Multilingual","Restricted",22,"Weekly DGIPR programme summary covering CM engagements, public communications, media moments, and policy announcements during April 2024.","2024-04-11"],
+    ["DOC-021","Nashik Onion Export Stabilisation Note FY2024-25","Policy Brief","Agriculture","Nashik","Namo Shetkari Yojana","English","Restricted",17,"Policy note on onion export price volatility, storage support, transport subsidy options, and farmer communication requirements for Nashik mandis.","2024-04-12"],
+    ["DOC-022","Grape Cluster Development Plan - Nashik Division","Report","Industries","Nashik","None","English","Restricted",28,"Cluster plan for grape processing, cold-chain expansion, export facilitation, farmer producer organisations, and agro-industry investment in Nashik division.","2024-04-13"],
+    ["DOC-023","Water Tanker Deployment Review - Marathwada Summer 2024","Report","Water Resources","Marathwada","Jalyukt Shivar 2.0","Marathi","Restricted",21,"Operational review of tanker deployment, groundwater stress, village-level scarcity mapping, and Jalyukt Shivar convergence during summer 2024.","2024-04-14"],
+    ["DOC-024","Women Farmer Training Camp Evaluation - Nashik","Research Paper","Agriculture","Nashik","Namo Shetkari Yojana","Marathi","Restricted",33,"Evaluation of women farmer training camps in Nashik, covering enrolment, crop advisory adoption, self-help group linkage, and extension worker feedback.","2024-04-15"],
+    ["DOC-025","Ladki Bahin District Dashboard - Pune and Nashik","Report","Women & Child","Pune","Ladki Bahin Yojana","English","Restricted",24,"District dashboard comparing enrolment, Aadhaar verification, grievance patterns, and DBT completion for Pune and Nashik under Ladki Bahin Yojana.","2024-04-16"],
+    ["DOC-026","GR: Ladki Bahin Grievance Redressal SOP","GR","Women & Child","State-wide","Ladki Bahin Yojana","Marathi","Public",12,"Government Resolution defining grievance escalation, nodal responsibilities, case closure timelines, and helpline reporting for Ladki Bahin Yojana.","2024-04-17"],
+    ["DOC-027","Pune Metro Ridership and Last-Mile Integration Memo","Report","Urban Development","Pune","Pune Metro","English","Restricted",19,"Memo on Pune Metro ridership, bus feeder coordination, parking integration, station access, and commuter communication for Phase 2.","2024-04-18"],
+    ["DOC-028","MSME Cluster Incentive Note - Aurangabad and Nashik","Policy Brief","Industries","Chhatrapati Sambhajinagar","Maharashtra Samruddhi","English","Restricted",15,"Policy note on MSME incentives, logistics corridor readiness, district industrial clusters, and investment facilitation for Aurangabad and Nashik.","2024-04-19"],
+    ["DOC-029","Digital Maharashtra Service Delivery Audit Q4","Report","IT & Digital","State-wide","Digital Maharashtra","English","Classified",30,"Q4 audit of citizen digital services, uptime, service completion, department integration, and data governance controls under Digital Maharashtra.","2024-04-20"],
+    ["DOC-030","Palghar Nutrition and Residential School Impact Note","Policy Brief","Tribal Development","Palghar","Van Bandhu Kalyan","Marathi","Restricted",18,"Impact note covering tribal nutrition outreach, residential school attendance, health camp coverage, and livelihood linkages in Palghar district.","2024-04-21"],
+    ["DOC-031","Annapurna Urban Beneficiary Verification Audit - Mumbai","Report","Food & Civil Supplies","Mumbai","Annapurna","English","Restricted",20,"Audit of Annapurna urban beneficiary verification, fair price shop coordination, household eligibility checks, and ward-level implementation issues in Mumbai.","2024-04-22"],
+    ["DOC-032","CM Media Briefing Pack - Agriculture and Women Welfare","Policy Brief","DGIPR","State-wide","Namo Shetkari Yojana","Multilingual","Restricted",16,"DGIPR media briefing pack connecting agriculture, women farmer support, Ladki Bahin welfare messaging, and district-ready talking points for leadership communication.","2024-04-23"],
+  ];
+
+  const mockDocs = seedRows.map(row => ({
+    id: row[0], title: row[1], type: row[2], department: row[3],
+    district: row[4], scheme: row[5], language: row[6], accessLevel: row[7],
+    pages: row[8], summary: row[9], date: row[10],
+    processingLog: [
+      { stage: "Uploaded", ts: row[10] + "T09:30:00Z" },
+      { stage: "OCR Extracted", ts: row[10] + "T09:31:12Z" },
+      { stage: "Entity Tagged", ts: row[10] + "T09:31:45Z" },
+      { stage: "Metadata Suggested", ts: row[10] + "T09:31:50Z" },
+      { stage: "Archived", ts: row[10] + "T09:35:00Z" }
+    ]
+  }));
+
+  const COPY = {
+    en: {
+      archiveTitle: "DGIPR Archive",
+      archiveSub: "Fene Archival Intelligence",
+      docs: "Docs", depts: "Depts", coverage: "Coverage",
+      search: "Search", fene: "Fene", notifications: "Alerts", archive: "Archive",
+      preview: "Preview", useInFene: "Use in Fene",
+      searchPlaceholder: "Search documents…",
+      generateBtn: "Generate", outputLabel: "Generated Output",
+      copyBtn: "Copy", sourcesLabel: "Sources cited",
+      noResults: "No results found", noResultsSub: "Try a different keyword",
+      suggestions: ["Nashik Agriculture", "Ladki Bahin", "CM Speech", "Water Conservation", "Pune Metro", "Women Welfare"],
+      feneTitle: "Fene Research", feneSub: "Government-grade research in one minute",
+      feneQuestion: "What should the research officer prepare?",
+      outputTypes: ["Policy Brief", "Scheme Summary", "Fact Sheet", "Speech Draft"],
+      backBtn: "Back",
+      lang: "मराठी",
+      unread: "5 unread",
+      notifTitle: "Notifications",
+      notifSub: "Activity from DGIPR system",
+    },
+    mr: {
+      archiveTitle: "DGIPR संग्रह",
+      archiveSub: "फेणे अभिलेख बुद्धिमत्ता",
+      docs: "नोंदी", depts: "विभाग", coverage: "कव्हरेज",
+      search: "शोध", fene: "फेणे", notifications: "सूचना", archive: "संग्रह",
+      preview: "पूर्वावलोकन", useInFene: "फेणेमध्ये वापरा",
+      searchPlaceholder: "दस्तऐवज शोधा…",
+      generateBtn: "तयार करा", outputLabel: "तयार केलेले आउटपुट",
+      copyBtn: "कॉपी", sourcesLabel: "संदर्भित स्रोत",
+      noResults: "निकाल आढळले नाहीत", noResultsSub: "वेगळा शब्द वापरा",
+      suggestions: ["नाशिक शेती", "लाडकी बहीण", "CM भाषण", "जलसंधारण", "पुणे मेट्रो", "महिला कल्याण"],
+      feneTitle: "फेणे संशोधन", feneSub: "एका मिनिटात सरकारी दर्जाचे संशोधन",
+      feneQuestion: "संशोधन अधिकाऱ्याने काय तयार करावे?",
+      outputTypes: ["धोरण संक्षिप्त", "योजना सारांश", "तथ्य पत्रक", "भाषण मसुदा"],
+      backBtn: "परत",
+      lang: "English",
+      unread: "५ अवाचित",
+      notifTitle: "सूचना",
+      notifSub: "DGIPR प्रणालीची क्रिया",
+    }
+  };
+
+  const notifications = [
+    { id: 1, type: "success", icon: CheckCircle2, iconBg: "#d1fae5", iconColor: "#059669", text: "DOC-032 archived successfully", sub: "DGIPR Media Briefing Pack processed", time: "2 min ago", unread: true },
+    { id: 2, type: "fene", icon: Sparkles, iconBg: "#fff7e6", iconColor: "#FF9933", text: "Fene output ready: Nashik Agriculture Brief", sub: "Policy Brief generated · 4 sources cited", time: "1 hr ago", unread: true },
+    { id: 3, type: "upload", icon: Upload, iconBg: "#eff6ff", iconColor: "#3b82f6", text: "New GR uploaded: Ladki Bahin SOP", sub: "DOC-026 · Women & Child Dept.", time: "3 hrs ago", unread: false },
+    { id: 4, type: "alert", icon: AlertCircle, iconBg: "#fff1f0", iconColor: "#ef4444", text: "Access request: DOC-014 (Classified)", sub: "Japan Infrastructure Delegation brief", time: "Yesterday", unread: false },
+    { id: 5, type: "report", icon: Activity, iconBg: "#f5f3ff", iconColor: "#7c3aed", text: "Weekly programme: MH This Week uploaded", sub: "DOC-020 · April 2024 edition archived", time: "2 days ago", unread: false },
+  ];
+
+  function fmtDate(d) {
+    return new Date(d + "T00:00:00").toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+  }
+
+  function badgeClass(type) {
+    if (type === "Speech") return "badge badge-speech";
+    if (type === "GR") return "badge badge-gr";
+    return "badge badge-default";
+  }
+
+  function generateFeneOutput(query, type) {
+    return `FENE OUTPUT — ${type.toUpperCase()}
+
+Query: "${query || "Selected DGIPR archive context"}"
+────────────────────────────
+
+EXECUTIVE SUMMARY
+This ${type} is generated from DGIPR archive context. The evidence set draws on Agriculture, Women & Child, and Water Resources departments covering Nashik, State-wide, and Marathwada districts.
+
+KEY EVIDENCE
+• Agricultural output grew 14% YoY (DOC-001)
+• Ladki Bahin crossed 1.5 crore beneficiaries (DOC-006)
+• Rs. 412 crore allocated for Nashik irrigation (DOC-003)
+• 41,000 women farmers enrolled in Nashik (DOC-024)
+• Aadhaar-linked coverage: 98.3% (DOC-025)
+
+RECOMMENDED ACTION
+Use the cited documents as the only claim base. Add district-specific figures before public circulation. Prepare one leadership talking point per department.
+
+This output resolves to archived DGIPR records only.`;
+  }
+
+  // ── STATUS BAR ──────────────────────────────────────────────────────────
+  function StatusBar() {
+    return (
+      <div className="status-bar">
+        <span className="status-bar-time">9:41</span>
+        <div className="status-icons">
+          <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
+            <rect x="0" y="6" width="3" height="6" rx="1" fill="#111" opacity=".35"/>
+            <rect x="4.5" y="4" width="3" height="8" rx="1" fill="#111" opacity=".55"/>
+            <rect x="9" y="2" width="3" height="10" rx="1" fill="#111" opacity=".75"/>
+            <rect x="13.5" y="0" width="3" height="12" rx="1" fill="#111"/>
+          </svg>
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+            <path d="M8 2.5C10.2 2.5 12.2 3.4 13.6 4.9L15 3.4C13.2 1.3 10.7 0 8 0 5.3 0 2.8 1.3 1 3.4l1.4 1.5C3.8 3.4 5.8 2.5 8 2.5Z" fill="#111"/>
+            <path d="M8 5.5c1.3 0 2.5.5 3.4 1.4L12.8 5.4C11.5 4.1 9.8 3.3 8 3.3s-3.5.8-4.8 2.1L4.6 6.9C5.5 6 6.7 5.5 8 5.5Z" fill="#111"/>
+            <circle cx="8" cy="10" r="1.5" fill="#111"/>
+          </svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+            <rect x="0" y="0" width="22" height="12" rx="3.5" stroke="#111" strokeWidth="1.2" fill="none" opacity=".35"/>
+            <rect x="1.5" y="1.5" width="16" height="9" rx="2" fill="#111"/>
+            <path d="M23.5 4v4c.8-.5 1.3-1.2 1.3-2S24.3 4.5 23.5 4Z" fill="#111" opacity=".4"/>
+          </svg>
+        </div>
+      </div>
+    );
+  }
+
+  // ── APP HEADER ───────────────────────────────────────────────────────────
+  function AppHeader({ lang, setLang, t, onOCR }) {
+    return (
+      <div className="app-header">
+        <div className="logo-group">
+          <div className="logo-icon">
+            <svg width="18" height="18" viewBox="0 0 48 48">
+              <circle cx="24" cy="24" r="20" fill="none" stroke="#FF9933" strokeWidth="3"/>
+              <path d="M24 7v34M7 24h34M13 13l22 22M35 13 13 35" stroke="#fff" strokeWidth="2"/>
+              <circle cx="24" cy="24" r="5" fill="#FF9933"/>
+            </svg>
+          </div>
+          <div>
+            <div className="logo-text">{t.archiveTitle}</div>
+            <div className="logo-sub">{t.archiveSub}</div>
+          </div>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <button className="camera-fab" onClick={onOCR} title="Scan document with OCR">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
+              <circle cx="12" cy="13" r="3"/>
+            </svg>
+          </button>
+          <button className="lang-btn" onClick={() => setLang(lang === "en" ? "mr" : "en")}>
+            <Icon as={Languages} size={11} />
+            {t.lang}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── ARCHIVE TAB ──────────────────────────────────────────────────────────
+  function ArchiveTab({ t, openSheet }) {
+    const [activeChip, setActiveChip] = useState("All");
+    const chips = ["All", "Speech", "GR", "Policy Brief", "Report", "Research Paper"];
+
+    const filtered = activeChip === "All" ? mockDocs : mockDocs.filter(d => d.type === activeChip);
+
+    return (
+      <div className="tab-enter" style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+        {/* Stats */}
+        <div className="stats-row">
+          <div className="stat-cell"><div className="stat-value">32</div><div className="stat-label">{t.docs}</div></div>
+          <div className="stat-cell"><div className="stat-value">14</div><div className="stat-label">{t.depts}</div></div>
+          <div className="stat-cell"><div className="stat-value">98%</div><div className="stat-label">{t.coverage}</div></div>
+        </div>
+        {/* Chips */}
+        <div className="chips-row">
+          {chips.map(c => (
+            <button key={c} className={`chip ${activeChip === c ? "active" : ""}`} onClick={() => setActiveChip(c)}>{c}</button>
+          ))}
+        </div>
+        {/* Doc list */}
+        <div className="doc-list">
+          {filtered.map(doc => (
+            <DocCard key={doc.id} doc={doc} t={t} onOpen={() => openSheet(doc)} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  function DocCard({ doc, t, onOpen }) {
+    return (
+      <div className="doc-card" onClick={onOpen}>
+        <div className="doc-card-top">
+          <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+            <span className={badgeClass(doc.type)}>{doc.type}</span>
+            <span className="badge badge-access">{doc.accessLevel}</span>
+          </div>
+          <span style={{ fontSize: "10px", fontWeight: 700, color: "var(--ink-3)" }}>{doc.id}</span>
+        </div>
+        <div className="doc-title">{doc.title}</div>
+        <div className="doc-meta">{doc.department} · {doc.district} · {fmtDate(doc.date)}</div>
+        <div className="doc-actions">
+          <button className="btn-preview" onClick={e => { e.stopPropagation(); onOpen(); }}>
+            <Icon as={Eye} size={12} />{t.preview}
+          </button>
+          <button className="btn-fene" onClick={e => { e.stopPropagation(); onOpen(); }}>
+            {t.useInFene} <Icon as={ArrowRight} size={12} />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── SEARCH TAB ──────────────────────────────────────────────────────────
+  function SearchTab({ t, openSheet }) {
+    const [query, setQuery] = useState("");
+
+    const results = query.trim().length > 0
+      ? mockDocs.filter(d => {
+          const q = query.toLowerCase();
+          return d.title.toLowerCase().includes(q) ||
+            d.department.toLowerCase().includes(q) ||
+            d.district.toLowerCase().includes(q) ||
+            d.scheme.toLowerCase().includes(q) ||
+            d.type.toLowerCase().includes(q) ||
+            d.summary.toLowerCase().includes(q);
+        }).map(d => ({ ...d, score: Math.floor(70 + Math.random() * 30) }))
+      : [];
+
+    return (
+      <div className="tab-enter" style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+        <div className="search-bar-wrap">
+          <div className="search-input-wrap">
+            <Icon as={Search} size={15} style={{ color: "var(--ink-3)", flexShrink: 0 }} />
+            <input
+              className="search-input"
+              placeholder={t.searchPlaceholder}
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              autoComplete="off"
+            />
+            {query && (
+              <button style={{ background: "none", border: "none", cursor: "pointer", padding: "2px", color: "var(--ink-3)" }} onClick={() => setQuery("")}>
+                <Icon as={X} size={14} />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {!query && (
+          <>
+            <div style={{ padding: "12px 14px 4px", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--ink-3)" }}>Suggested</div>
+            <div className="suggestions-row">
+              {t.suggestions.map(s => (
+                <button key={s} className="chip" onClick={() => setQuery(s)}>{s}</button>
+              ))}
+            </div>
+            <div style={{ padding: "20px", textAlign: "center", color: "var(--ink-3)" }}>
+              <div className="search-empty-icon" style={{ margin: "0 auto 12px" }}>
+                <Icon as={Search} size={22} style={{ color: "var(--ink-3)" }} />
+              </div>
+              <div style={{ fontSize: "13px", fontWeight: 700, color: "var(--ink-2)" }}>Search 847 archived documents</div>
+              <div style={{ fontSize: "12px", marginTop: "4px" }}>Type a keyword, topic, district, or scheme</div>
+            </div>
+          </>
+        )}
+
+        {query && results.length === 0 && (
+          <div className="search-empty">
+            <div className="search-empty-icon">
+              <Icon as={Search} size={22} style={{ color: "var(--ink-3)" }} />
+            </div>
+            <div style={{ fontSize: "13px", fontWeight: 700, color: "var(--ink-2)" }}>{t.noResults}</div>
+            <div style={{ fontSize: "12px", marginTop: "4px" }}>{t.noResultsSub}</div>
+          </div>
+        )}
+
+        {query && results.length > 0 && (
+          <div className="doc-list">
+            <div style={{ padding: "0 2px 2px", fontSize: "11px", fontWeight: 700, color: "var(--ink-3)", textTransform: "uppercase", letterSpacing: ".05em" }}>{results.length} result{results.length !== 1 ? "s" : ""}</div>
+            {results.map(doc => (
+              <div key={doc.id} className="doc-card" onClick={() => openSheet(doc)}>
+                <div className="doc-card-top">
+                  <div style={{ display: "flex", gap: "6px" }}>
+                    <span className={badgeClass(doc.type)}>{doc.type}</span>
+                    <span className="badge badge-score">{doc.score}% match</span>
+                  </div>
+                  <span style={{ fontSize: "10px", fontWeight: 700, color: "var(--ink-3)" }}>{doc.id}</span>
+                </div>
+                <div className="doc-title">{doc.title}</div>
+                <div className="doc-meta">{doc.department} · {doc.district}</div>
+                <div className="confidence-bar-bg" style={{ marginTop: "8px" }}>
+                  <div className="confidence-bar-fill" style={{ width: `${doc.score}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ── FENE TAB ─────────────────────────────────────────────────────────────
+  function FeneTab({ t }) {
+    const [activeType, setActiveType] = useState(0);
+    const [query, setQuery] = useState("");
+    const [generating, setGenerating] = useState(false);
+    const [output, setOutput] = useState(null);
+    const [copied, setCopied] = useState(false);
+
+    function handleGenerate() {
+      if (generating) return;
+      setGenerating(true);
+      setOutput(null);
+      setTimeout(() => {
+        setOutput({ text: generateFeneOutput(query, t.outputTypes[activeType]), sources: ["DOC-001", "DOC-003", "DOC-006", "DOC-024"] });
+        setGenerating(false);
+      }, 1800);
+    }
+
+    function handleCopy() {
+      if (output) {
+        navigator.clipboard?.writeText(output.text).catch(() => {});
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+    }
+
+    return (
+      <div className="tab-enter">
+        {/* Hero */}
+        <div className="fene-hero">
+          <div className="fene-hero-icon">
+            <Icon as={BrainCircuit} size={22} style={{ color: "var(--black)" }} />
+          </div>
+          <div>
+            <div className="fene-hero-title">{t.feneTitle}</div>
+            <div className="fene-hero-sub">{t.feneSub}</div>
+          </div>
+        </div>
+
+        <div className="fene-body">
+          {/* Type selector */}
+          <div className="field-label">Output Type</div>
+          <div className="fene-type-row">
+            {t.outputTypes.map((type, i) => (
+              <button key={type} className={`type-chip ${activeType === i ? "active" : ""}`} onClick={() => setActiveType(i)}>{type}</button>
+            ))}
+          </div>
+
+          {/* Textarea */}
+          <div className="field-label">Research question</div>
+          <textarea
+            className="fene-textarea"
+            placeholder={t.feneQuestion}
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            rows={4}
+          />
+
+          {/* Generate button */}
+          <button className="btn-generate" onClick={handleGenerate} disabled={generating}>
+            {generating ? (
+              <>
+                <span style={{ display: "flex", gap: "4px", alignItems: "center" }}>
+                  <span className="loading-dot" style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--black)", display: "inline-block" }} />
+                  <span className="loading-dot" style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--black)", display: "inline-block" }} />
+                  <span className="loading-dot" style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--black)", display: "inline-block" }} />
+                </span>
+                Generating…
+              </>
+            ) : (
+              <><Icon as={Sparkles} size={15} />{t.generateBtn}</>
+            )}
+          </button>
+
+          {/* Output card */}
+          {output && (
+            <div className="output-card">
+              <div className="output-header">
+                <span className="output-label">{t.outputLabel}</span>
+                <button className="btn-copy" onClick={handleCopy}>
+                  <Icon as={copied ? Check : Copy} size={11} />
+                  {copied ? "Copied!" : t.copyBtn}
+                </button>
+              </div>
+              <div className="output-body">{output.text}</div>
+              <div className="sources-row">
+                <span style={{ fontSize: "10px", fontWeight: 700, color: "var(--ink-3)", textTransform: "uppercase", letterSpacing: ".05em", marginRight: "4px" }}>{t.sourcesLabel}:</span>
+                {output.sources.map(s => <span key={s} className="source-chip">{s}</span>)}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── NOTIFICATIONS TAB ────────────────────────────────────────────────────
+  function NotificationsTab({ t }) {
+    return (
+      <div className="tab-enter">
+        <div className="notif-header">
+          <div className="notif-title">{t.notifTitle}</div>
+          <div className="notif-subtitle">{t.unread} · {t.notifSub}</div>
+        </div>
+        <div className="notif-list">
+          {notifications.map(n => (
+            <div key={n.id} className="notif-item">
+              <div className="notif-icon-wrap" style={{ background: n.iconBg }}>
+                <Icon as={n.icon} size={18} style={{ color: n.iconColor }} />
+              </div>
+              <div className="notif-body">
+                <div className="notif-text">{n.text}</div>
+                <div className="notif-time">{n.sub}</div>
+                <div className="notif-time" style={{ marginTop: "2px" }}>{n.time}</div>
+              </div>
+              {n.unread && <div className="notif-dot" style={{ background: "#FF9933" }} />}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // ── BOTTOM SHEET ─────────────────────────────────────────────────────────
+  function DocSheet({ doc, onClose, t }) {
+    const open = !!doc;
+
+    return (
+      <>
+        <div className={`sheet-backdrop ${open ? "open" : ""}`} onClick={onClose} />
+        <div className={`bottom-sheet ${open ? "open" : ""}`}>
+          {doc && (
+            <>
+              <div className="sheet-handle" />
+              <div className="sheet-header">
+                <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", fontWeight: 700, color: "var(--ink-3)", marginBottom: "10px", padding: 0 }}>
+                  <Icon as={X} size={14} /> Close
+                </button>
+                <div style={{ display: "flex", gap: "6px", marginBottom: "8px" }}>
+                  <span className={badgeClass(doc.type)}>{doc.type}</span>
+                  <span className="badge badge-access">{doc.accessLevel}</span>
+                  <span className="badge badge-default">{doc.language}</span>
+                </div>
+                <div style={{ fontSize: "15px", fontWeight: 800, letterSpacing: "-0.01em", lineHeight: 1.35, color: "var(--black)" }}>{doc.title}</div>
+                <div style={{ fontSize: "11px", color: "var(--ink-3)", fontWeight: 600, marginTop: "4px" }}>{doc.id} · {doc.department} · {doc.district} · {doc.pages}p</div>
+              </div>
+              <div className="sheet-body">
+                <div className="field-label" style={{ marginBottom: "8px" }}>Summary</div>
+                <div style={{ fontSize: "13px", lineHeight: 1.65, color: "var(--ink-2)", fontWeight: 500, marginBottom: "18px" }}>{doc.summary}</div>
+
+                <div className="field-label" style={{ marginBottom: "10px" }}>Processing log</div>
+                <div>
+                  {doc.processingLog.map((step, i) => (
+                    <div key={step.stage} className="log-step">
+                      {i < doc.processingLog.length - 1 && <div className="log-line" />}
+                      <div className="log-dot" />
+                      <div className="log-label">{step.stage}</div>
+                      <div className="log-time">{new Date(step.ts).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="field-label" style={{ marginTop: "18px", marginBottom: "8px" }}>Tags</div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                  {[doc.type, doc.department, doc.district, doc.scheme !== "None" ? doc.scheme : null, doc.language].filter(Boolean).map(tag => (
+                    <span key={tag} className="detail-tag">{tag}</span>
+                  ))}
+                </div>
+              </div>
+              <div className="sheet-footer">
+                <button className="btn-preview" style={{ flex: 1, height: 44 }} onClick={onClose}>
+                  <Icon as={Download} size={13} /> Download
+                </button>
+                <button className="btn-fene" style={{ flex: 2, height: 44, borderRadius: "12px" }} onClick={onClose}>
+                  <Icon as={BrainCircuit} size={13} /> Use in Fene
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </>
+    );
+  }
+
+  // ── OCR SCREEN ───────────────────────────────────────────────────────────
+  // Simulated OCR text that streams character by character
+  const OCR_STREAM_TEXT = `महाराष्ट्र शासन / GOVERNMENT OF MAHARASHTRA
+सामान्य प्रशासन विभाग / General Administration Dept.
+─────────────────────────────────────
+शासन परिपत्रक / GOVERNMENT RESOLUTION
+क्रमांक: शासन/2024/प्र.क्र.47/2024/15-A
+Date: 15 March 2024
+─────────────────────────────────────
+Subject: Namo Shetkari Mahila Sashaktikaran
+Yojana — District Implementation Guidelines
+for Nashik Division (FY 2024-25)
+
+Reference: GR No. AGR/2023/CR-112/11-A dt.
+12 Jan 2024
+
+1. BACKGROUND
+The Hon'ble Chief Minister, Maharashtra, at
+the Nashik Agriculture Summit 2024, directed
+expedited implementation of women farmer
+support under the Namo Shetkari Yojana.
+
+2. SCOPE
+District: Nashik Division (Nashik, Nandurbar,
+Dhule, Jalgaon, Ahmednagar)
+Beneficiaries: Women farmers registered under
+PM-KISAN with active Aadhaar-linked accounts.
+Budget allocation: Rs. 285 crore (FY 2024-25)
+
+3. KEY DIRECTIVES
+(a) All talukas to complete enrolment drives
+    by 30 April 2024.
+(b) Training camps: minimum 312 camps across
+    Nashik division.
+(c) DBT transfer cycle: monthly, via Jan Dhan.
+
+By order and in the name of the Governor
+of Maharashtra,
+
+Sd/-
+Additional Chief Secretary
+Agriculture & Farmers Welfare Dept.`;
+
+  // Extracted fields after OCR
+  const OCR_FIELDS = [
+    { key: "Doc Type",   val: "Government Resolution (GR)", conf: 97, tier: "hi" },
+    { key: "Department", val: "Agriculture & Farmers Welfare", conf: 95, tier: "hi" },
+    { key: "District",   val: "Nashik Division", conf: 93, tier: "hi" },
+    { key: "Scheme",     val: "Namo Shetkari Yojana", conf: 91, tier: "hi" },
+    { key: "Language",   val: "Bilingual (Marathi / English)", conf: 99, tier: "hi" },
+    { key: "Date",       val: "15 March 2024", conf: 88, tier: "hi" },
+    { key: "Access",     val: "Restricted", conf: 78, tier: "mid" },
+    { key: "Pages",      val: "4 (estimated)", conf: 72, tier: "mid" },
+  ];
+
+  // Bounding boxes (as % of image dimensions) to show during scan
+  const OCR_BBOXES = [
+    { top: "6%",  left: "4%",  width: "72%", height: "7%",  delay: 600 },
+    { top: "15%", left: "4%",  width: "55%", height: "5%",  delay: 900 },
+    { top: "22%", left: "4%",  width: "88%", height: "4%",  delay: 1200 },
+    { top: "28%", left: "4%",  width: "65%", height: "4%",  delay: 1500 },
+    { top: "35%", left: "4%",  width: "82%", height: "16%", delay: 1800 },
+    { top: "53%", left: "4%",  width: "75%", height: "12%", delay: 2200 },
+    { top: "68%", left: "4%",  width: "60%", height: "8%",  delay: 2600 },
+    { top: "78%", left: "4%",  width: "88%", height: "10%", delay: 3000 },
+  ];
+
+  function OCRScreen({ open, onClose }) {
+    // phase: landing | preview | scanning | streaming | results
+    const [phase, setPhase] = useState("landing");
+    const [imgSrc, setImgSrc] = useState(null);
+    const [streamedText, setStreamedText] = useState("");
+    const [streamProgress, setStreamProgress] = useState(0);
+    const [visibleBboxes, setVisibleBboxes] = useState([]);
+    const [streamDone, setStreamDone] = useState(false);
+    const fileRef = useRef(null);
+    const camRef = useRef(null);
+    const terminalRef = useRef(null);
+    const streamTimers = useRef([]);
+
+    function resetAll() {
+      streamTimers.current.forEach(clearTimeout);
+      streamTimers.current = [];
+      setPhase("landing");
+      setImgSrc(null);
+      setStreamedText("");
+      setStreamProgress(0);
+      setVisibleBboxes([]);
+      setStreamDone(false);
+    }
+
+    function handleClose() { resetAll(); onClose(); }
+
+    function loadFile(file) {
+      if (!file) return;
+      if (file.type.startsWith("image/")) {
+        const r = new FileReader();
+        r.onload = e => { setImgSrc(e.target.result); setPhase("preview"); };
+        r.readAsDataURL(file);
+      } else {
+        // Non-image (PDF etc.) — go straight to scanning with placeholder
+        setImgSrc(null);
+        setPhase("preview");
+      }
+    }
+
+    function startScan() {
+      setPhase("scanning");
+      setVisibleBboxes([]);
+
+      // Schedule bounding box appearances
+      OCR_BBOXES.forEach((box, i) => {
+        const t = setTimeout(() => {
+          setVisibleBboxes(prev => [...prev, i]);
+        }, box.delay);
+        streamTimers.current.push(t);
+      });
+
+      // After scan animation (~3.8s), move to streaming phase
+      const t = setTimeout(() => startStreaming(), 3800);
+      streamTimers.current.push(t);
+    }
+
+    function startStreaming() {
+      setPhase("streaming");
+      setStreamedText("");
+      setStreamProgress(0);
+      setStreamDone(false);
+
+      const chars = OCR_STREAM_TEXT.split("");
+      const total = chars.length;
+      let i = 0;
+
+      function tick() {
+        // stream 3–6 chars per tick for realistic feel
+        const burst = Math.floor(3 + Math.random() * 4);
+        i = Math.min(i + burst, total);
+        const chunk = chars.slice(0, i).join("");
+        setStreamedText(chunk);
+        setStreamProgress(Math.round((i / total) * 100));
+
+        if (terminalRef.current) {
+          terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+        }
+
+        if (i < total) {
+          const delay = 18 + Math.random() * 22;
+          const t = setTimeout(tick, delay);
+          streamTimers.current.push(t);
+        } else {
+          setStreamDone(true);
+          const t = setTimeout(() => setPhase("results"), 800);
+          streamTimers.current.push(t);
+        }
+      }
+      tick();
+    }
+
+    // Cleanup on unmount
+    useEffect(() => () => streamTimers.current.forEach(clearTimeout), []);
+
+    return (
+      <div className={`ocr-screen ${open ? "open" : ""}`}>
+        {/* Top bar */}
+        <div className="ocr-topbar">
+          <button className="ocr-back-btn" onClick={handleClose}>
+            <Icon as={ChevronLeft} size={18} />
+          </button>
+          <div>
+            <div className="ocr-topbar-title">
+              {phase === "landing"   && "Scan Document"}
+              {phase === "preview"   && "Review Image"}
+              {phase === "scanning"  && "Scanning…"}
+              {phase === "streaming" && "Reading Text…"}
+              {phase === "results"   && "OCR Complete"}
+            </div>
+            <div className="ocr-topbar-sub">
+              {phase === "landing"   && "Fene OCR · Powered by IntelliSense"}
+              {phase === "preview"   && "Confirm image before scanning"}
+              {phase === "scanning"  && "Detecting text regions"}
+              {phase === "streaming" && "Extracting content · fene-ocr-v2"}
+              {phase === "results"   && "Review extracted fields"}
+            </div>
+          </div>
+          {phase === "results" && (
+            <div style={{ marginLeft: "auto" }}>
+              <div className="ocr-confidence-pill" style={{ background: "rgba(255,153,51,.2)", color: "var(--saffron)" }}>
+                94% conf.
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ── LANDING ── */}
+        {phase === "landing" && (
+          <div className="ocr-landing">
+            <div className="ocr-hero-ring">
+              <Icon as={ScanText} size={38} style={{ color: "var(--saffron)" }} />
+            </div>
+            <div className="ocr-hero-title">Document OCR</div>
+            <div className="ocr-hero-sub">
+              Photograph or upload any government document. Fene reads it, extracts fields, and prepares it for archival.
+            </div>
+            <div className="ocr-source-btns">
+              {/* Demo button — no upload needed */}
+              <button className="ocr-source-btn primary" onClick={() => { setImgSrc(null); setPhase("scanning"); setVisibleBboxes([]); let stage = 0; const bboxTimers = OCR_BBOXES.map((box, i) => setTimeout(() => setVisibleBboxes(prev => [...prev, i]), box.delay)); bboxTimers.forEach(t => streamTimers.current.push(t)); const t = setTimeout(() => startStreaming(), 3800); streamTimers.current.push(t); }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 3l14 9-14 9V3z"/></svg>
+                <div>
+                  <div className="ocr-source-btn-label">Run Demo Scan</div>
+                  <div className="ocr-source-btn-sub">Simulate OCR on a sample GR — no upload needed</div>
+                </div>
+                <Icon as={ArrowRight} size={16} style={{ marginLeft: "auto" }} />
+              </button>
+              <button className="ocr-source-btn secondary" onClick={() => camRef.current?.click()}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                <div>
+                  <div className="ocr-source-btn-label">Capture with Camera</div>
+                  <div className="ocr-source-btn-sub">Point at a physical document</div>
+                </div>
+                <Icon as={ArrowRight} size={16} style={{ marginLeft: "auto", opacity: .5 }} />
+              </button>
+              <button className="ocr-source-btn secondary" onClick={() => fileRef.current?.click()}>
+                <Icon as={ImageUp} size={20} />
+                <div>
+                  <div className="ocr-source-btn-label">Upload Image / PDF</div>
+                  <div className="ocr-source-btn-sub">JPG, PNG, PDF · up to 50 MB</div>
+                </div>
+                <Icon as={ArrowRight} size={16} style={{ marginLeft: "auto", opacity: .5 }} />
+              </button>
+            </div>
+            <div style={{ marginTop: 20, display: "flex", alignItems: "center", gap: "7px", color: "rgba(255,255,255,.3)", fontSize: "11px", fontWeight: 600 }}>
+              <Icon as={ScanLine} size={13} style={{ color: "rgba(255,153,51,.5)" }} />
+              Marathi · Hindi · English supported
+            </div>
+            <input ref={fileRef} type="file" accept="image/*,.pdf" style={{ display: "none" }} onChange={e => loadFile(e.target.files?.[0])} />
+            <input ref={camRef} type="file" accept="image/*" capture="environment" style={{ display: "none" }} onChange={e => loadFile(e.target.files?.[0])} />
+          </div>
+        )}
+
+        {/* ── PREVIEW ── */}
+        {phase === "preview" && (
+          <div className="ocr-image-stage">
+            <div className="ocr-image-viewport">
+              {imgSrc
+                ? <img className="ocr-image-el" src={imgSrc} alt="Document" />
+                : (
+                  <div style={{ textAlign: "center", color: "rgba(255,255,255,.35)" }}>
+                    <Icon as={FileText} size={48} />
+                    <div style={{ fontSize: 12, marginTop: 10, fontWeight: 600 }}>PDF ready for scanning</div>
+                  </div>
+                )
+              }
+              {/* Corner guides */}
+              <div className="ocr-guide-corner tl" />
+              <div className="ocr-guide-corner tr" />
+              <div className="ocr-guide-corner bl" />
+              <div className="ocr-guide-corner br" />
+            </div>
+            <div className="ocr-image-footer">
+              <button className="btn-preview" style={{ flex: 1, height: 44, borderRadius: "12px" }} onClick={handleClose}>
+                Retake
+              </button>
+              <button className="btn-fene" style={{ flex: 2, height: 44, borderRadius: "12px" }} onClick={startScan}>
+                <Icon as={Scan} size={15} /> Start OCR Scan
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── SCANNING (beam + bboxes over image) ── */}
+        {phase === "scanning" && (
+          <div className="ocr-image-stage">
+            <div className="ocr-image-viewport">
+              {imgSrc
+                ? <img className="ocr-image-el" src={imgSrc} alt="Document" style={{ opacity: .85 }} />
+                : (
+                  <div style={{ textAlign: "center", color: "rgba(255,255,255,.2)" }}>
+                    <Icon as={FileText} size={48} />
+                  </div>
+                )
+              }
+              {/* Scan beam */}
+              <div className="ocr-scan-beam" />
+              {/* Bounding boxes */}
+              {OCR_BBOXES.map((box, i) =>
+                visibleBboxes.includes(i) ? (
+                  <div key={i} className="ocr-bbox" style={{ top: box.top, left: box.left, width: box.width, height: box.height }} />
+                ) : null
+              )}
+              {/* Corner guides */}
+              <div className="ocr-guide-corner tl" />
+              <div className="ocr-guide-corner tr" />
+              <div className="ocr-guide-corner bl" />
+              <div className="ocr-guide-corner br" />
+            </div>
+            <div className="ocr-image-footer" style={{ justifyContent: "center" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "rgba(255,255,255,.55)", fontSize: "12px", fontWeight: 600 }}>
+                <span className="loading-dot" style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--saffron)", display: "inline-block" }} />
+                <span className="loading-dot" style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--saffron)", display: "inline-block" }} />
+                <span className="loading-dot" style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--saffron)", display: "inline-block" }} />
+                Detecting {visibleBboxes.length} text region{visibleBboxes.length !== 1 ? "s" : ""}…
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── STREAMING (terminal readout) ── */}
+        {phase === "streaming" && (
+          <div className="ocr-running-panel">
+            <div className="ocr-status-bar">
+              <div className="ocr-status-dot" />
+              <span className="ocr-status-text">Reading document…</span>
+              <span className="ocr-status-model">fene-ocr-v2 · multilingual</span>
+            </div>
+            {imgSrc && (
+              <div className="ocr-img-thumb">
+                <img src={imgSrc} alt="" />
+                <div className="ocr-img-thumb-overlay" />
+              </div>
+            )}
+            <div className="ocr-terminal" ref={terminalRef}>
+              <div className="ocr-terminal-line dim">{"// fene-ocr-v2 · text extraction stream"}</div>
+              <div className="ocr-terminal-line dim">{"// document language: bilingual detected"}</div>
+              <div className="ocr-terminal-line dim">&nbsp;</div>
+              {streamedText}
+              {!streamDone && <span className="ocr-terminal-cursor" />}
+            </div>
+            <div className="ocr-progress-wrap">
+              <div className="ocr-progress-label">
+                <span>Extracting text</span>
+                <span>{streamProgress}%</span>
+              </div>
+              <div className="ocr-progress-track">
+                <div className="ocr-progress-fill" style={{ width: `${streamProgress}%` }} />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── RESULTS ── */}
+        {phase === "results" && (
+          <div className="ocr-results">
+            {imgSrc && (
+              <div className="ocr-results-img">
+                <img src={imgSrc} alt="Scanned document" />
+                <div className="ocr-results-img-overlay">
+                  <div className="ocr-confidence-pill">
+                    <Icon as={CheckCircle2} size={12} /> 94% overall confidence
+                  </div>
+                </div>
+              </div>
+            )}
+            <div className="ocr-results-body">
+              {/* Extracted raw text */}
+              <div className="ocr-extracted-text-box">
+                <div className="ocr-extracted-text-header">
+                  <span className="ocr-extracted-text-label">Extracted Text</span>
+                  <button className="btn-copy" style={{ height: 24 }} onClick={() => navigator.clipboard?.writeText(OCR_STREAM_TEXT).catch(() => {})}>
+                    <Icon as={Copy} size={10} /> Copy
+                  </button>
+                </div>
+                <div className="ocr-extracted-text-body">{OCR_STREAM_TEXT}</div>
+              </div>
+
+              {/* Extracted fields */}
+              <div className="ocr-fields-section">
+                <div className="field-label" style={{ marginBottom: "10px", color: "var(--ink-3)" }}>Suggested Metadata</div>
+                {OCR_FIELDS.map(f => (
+                  <div key={f.key} className="ocr-field-row">
+                    <span className="ocr-field-key">{f.key}</span>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <span className="ocr-field-val">{f.val}</span>
+                      <span className={`ocr-field-conf ${f.tier}`}>{f.conf}%</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="ocr-results-footer">
+              <button className="btn-preview" style={{ flex: 1, height: 44, borderRadius: "12px" }} onClick={resetAll}>
+                Scan again
+              </button>
+              <button className="btn-fene" style={{ flex: 2, height: 44, borderRadius: "12px" }} onClick={handleClose}>
+                <Icon as={Check} size={14} /> Archive Document
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ── BOTTOM NAV ────────────────────────────────────────────────────────────
+  function BottomNav({ active, setActive, t }) {
+    const tabs = [
+      { id: "archive", label: t.archive, icon: Archive },
+      { id: "search", label: t.search, icon: Search },
+      { id: "fene", label: t.fene, icon: BrainCircuit },
+      { id: "notifications", label: t.notifications, icon: Bell, badge: 2 },
+    ];
+    return (
+      <div className="bottom-nav">
+        {tabs.map(tab => (
+          <button
+            key={tab.id}
+            className="nav-item"
+            onClick={() => setActive(tab.id)}
+          >
+            {tab.badge && <span className="nav-badge">{tab.badge}</span>}
+            <Icon
+              as={tab.icon}
+              size={22}
+              style={{ color: active === tab.id ? "#FF9933" : "var(--ink-3)" }}
+            />
+            <span className="nav-label" style={{ color: active === tab.id ? "#FF9933" : "var(--ink-3)" }}>
+              {tab.label}
+            </span>
+          </button>
+        ))}
+      </div>
+    );
+  }
+
+  // ── APP ROOT ─────────────────────────────────────────────────────────────
+  function App() {
+    const [lang, setLang] = useState("en");
+    const [active, setActive] = useState("archive");
+    const [sheetDoc, setSheetDoc] = useState(null);
+    const [ocrOpen, setOcrOpen] = useState(false);
+    const t = COPY[lang];
+
+    const tabKey = `${lang}-${active}`;
+
+    return (
+      <div className="desktop-shell">
+        <div className="phone-outer">
+          <div className="phone-inner">
+            <div className="dynamic-island" />
+            <div className="app-chrome">
+              <StatusBar />
+              <AppHeader lang={lang} setLang={setLang} t={t} onOCR={() => setOcrOpen(true)} />
+              <div className="content-area" key={tabKey}>
+                {active === "archive" && <ArchiveTab t={t} openSheet={setSheetDoc} />}
+                {active === "search" && <SearchTab t={t} openSheet={setSheetDoc} />}
+                {active === "fene" && <FeneTab t={t} />}
+                {active === "notifications" && <NotificationsTab t={t} />}
+              </div>
+              <BottomNav active={active} setActive={setActive} t={t} />
+            </div>
+            <DocSheet doc={sheetDoc} onClose={() => setSheetDoc(null)} t={t} />
+            <OCRScreen open={ocrOpen} onClose={() => setOcrOpen(false)} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
